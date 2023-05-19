@@ -9,6 +9,3 @@ add_executable(log main.cpp)
 
 target_include_directories(log PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
-
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/output)
-set_target_properties(log PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/output)

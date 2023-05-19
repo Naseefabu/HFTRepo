@@ -10,7 +10,6 @@
 #include <utility>
 #include <vector>
 #include <thread>
-
 #include "utils.hpp"
 
 
@@ -176,42 +175,46 @@ private:
   Logger &operator=(Logger &&) = delete;
 
   void Writer() {
-    using namespace std::chrono_literals;
-    
-    while (active_ || queues_size_) {
-      {
+    try{
+      using namespace std::chrono_literals;
+      
+      while (active_ || queues_size_) {
+        {
 
-        // Get the current day
-        int NewDay = CurrDay();
+          // Get the current day
+          int NewDay = CurrDay();
 
-        if(NewDay != LastDay){
-          LastDay = NewDay;
-          // create new file with current date and time
-          std::string newFileName = CreateNewFileName();
-          ostream_ = std::make_unique<std::ofstream>(newFileName);
-        }
-
-        for (auto it = queues_.begin(); it != queues_.end();) {
-          auto &q = *it;
-          while (q->front()) {
-            if (ostream_) {
-              q->front()->Format(*ostream_);
-            }
-            if (cout_) {
-              q->front()->Format(std::cout);
-            }
-            q->pop();
+          if(NewDay != LastDay){
+            LastDay = NewDay;
+            // create new file with current date and time
+            std::string newFileName = CreateNewFileName();
+            ostream_ = std::make_unique<std::ofstream>(newFileName);
           }
-          if (q.unique() && !q->front()) {
-            it = queues_.erase(it);
-          } else {
-            ++it;
+
+          for (auto it = queues_.begin(); it != queues_.end();) {
+            auto &q = *it;
+            while (q->front()) {
+              if (ostream_) {
+                q->front()->Format(*ostream_);
+              }
+              if (cout_) {
+                q->front()->Format(std::cout);
+              }
+              q->pop();
+            }
+            if (q.unique() && !q->front()) {
+              it = queues_.erase(it);
+            } else {
+              ++it;
+            }
           }
+          queues_size_ = queues_.size();
+          std::cout << "queue size : " << queues_size_ << std::endl; 
         }
-        queues_size_ = queues_.size();
-        std::cout << "queue size : " << queues_size_ << std::endl; 
       }
-      // std::this_thread::sleep_for(100ms);
+    }
+    catch(...){
+      std::cout << "Runtime Error Occured" << std::endl;
     }
   }
 

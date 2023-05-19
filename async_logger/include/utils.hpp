@@ -3,14 +3,12 @@
 #include <string>
 
 std::string CreateNewFileName() {
-  // Get the current system time
+    
   std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
   std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
 
-  // Convert the current time to a struct tm
   std::tm* currentDate = std::localtime(&currentTime);
 
-  // Extract the year, month, and day from the struct tm
   int currentYear = currentDate->tm_year + 1900; 
   int currentMonth = currentDate->tm_mon + 1;   
   int currentDay = currentDate->tm_mday;        
@@ -25,9 +23,7 @@ int CurrDay() {
     std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
     std::tm* currentDate = std::localtime(&currentTime);
 
-    // Get the current date
     int currentDay = currentDate->tm_mday;
 
-    // Compare the dates
     return currentDay;
 }
