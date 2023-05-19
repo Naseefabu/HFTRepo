@@ -3,7 +3,7 @@
 In the application thread we push the logging message to lockfree queue where thread 2 busy spin on the queue and saves it to disk.
 Lock-free data structures are data structures that are thread and interrupt safe without having to use mutual exclusion mechanisms. 
 Locking has non-neglegible runtime cost as each lock requires a syscall. Application thread is not blocked while logging the message it 
-will just push the message to the lockfree queue, where write thread will run on its own saving to disk.
+will just push the message to the lockfree queue, where writer() thread will run on its own saving to disk.
 
 ### Architecture 
 
