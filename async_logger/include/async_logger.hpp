@@ -179,19 +179,6 @@ private:
   Logger(Logger &&other) = delete;
   Logger &operator=(Logger &&) = delete;
 
-  int CurrDay() { 
-
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
-    std::tm* currentDate = std::localtime(&currentTime);
-
-    // Get the current date
-    int currentDay = currentDate->tm_mday;
-
-    // Compare the dates
-    return currentDay;
-  }
-
   void Writer() {
     using namespace std::chrono_literals;
     
