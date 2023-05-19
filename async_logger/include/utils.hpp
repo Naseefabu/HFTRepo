@@ -21,13 +21,13 @@ std::string CreateNewFileName() {
 
 int CurrDay() { 
 
-std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
-std::tm* currentDate = std::localtime(&currentTime);
+    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
+    std::tm* currentDate = std::localtime(&currentTime);
 
-// Get the current date
-int currentDay = currentDate->tm_mday;
+    // Get the current date
+    int currentDay = currentDate->tm_mday;
 
-// Compare the dates
-return currentDay;
+    // Compare the dates
+    return currentDay;
 }

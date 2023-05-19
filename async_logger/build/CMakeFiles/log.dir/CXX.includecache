@@ -36,7 +36,7 @@ chrono
 string
 -
 
-/home/user/Desktop/atrimo-test/async_logger/logger_bench.cpp
+/home/user/Desktop/atrimo-test/async_logger/main.cpp
 async_logger.hpp
 /home/user/Desktop/atrimo-test/async_logger/async_logger.hpp
 utils.hpp

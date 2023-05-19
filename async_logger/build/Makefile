@@ -143,32 +143,32 @@ log/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/build
 .PHONY : log/fast
 
-logger_bench.o: logger_bench.cpp.o
+main.o: main.cpp.o
 
-.PHONY : logger_bench.o
+.PHONY : main.o
 
 # target to build an object file
-logger_bench.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/logger_bench.cpp.o
-.PHONY : logger_bench.cpp.o
+main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/main.cpp.o
+.PHONY : main.cpp.o
 
-logger_bench.i: logger_bench.cpp.i
+main.i: main.cpp.i
 
-.PHONY : logger_bench.i
+.PHONY : main.i
 
 # target to preprocess a source file
-logger_bench.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/logger_bench.cpp.i
-.PHONY : logger_bench.cpp.i
+main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/main.cpp.i
+.PHONY : main.cpp.i
 
-logger_bench.s: logger_bench.cpp.s
+main.s: main.cpp.s
 
-.PHONY : logger_bench.s
+.PHONY : main.s
 
 # target to generate assembly for a file
-logger_bench.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/logger_bench.cpp.s
-.PHONY : logger_bench.cpp.s
+main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/main.cpp.s
+.PHONY : main.cpp.s
 
 # Help Target
 help:
@@ -179,9 +179,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... log"
-	@echo "... logger_bench.o"
-	@echo "... logger_bench.i"
-	@echo "... logger_bench.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
 .PHONY : help
 
 

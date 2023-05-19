@@ -1,5 +1,5 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/log.dir/logger_bench.cpp.o"
+  "CMakeFiles/log.dir/main.cpp.o"
   "log"
   "log.pdb"
 )

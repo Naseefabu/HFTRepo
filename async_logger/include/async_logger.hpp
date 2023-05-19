@@ -158,12 +158,8 @@ public:
 
 private:
   Logger() : active_(true), queues_size_(1), queue_size_(1024), cout_(true) {
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    std::time_t currentTime = std::chrono::system_clock::to_time_t(now);
-    std::tm* currentDate = std::localtime(&currentTime);
-
     // Get the current date
-    LastDay = currentDate->tm_mday;
+    LastDay = CurrDay();
     thread_ = std::thread([this] { Writer(); });
   }
 

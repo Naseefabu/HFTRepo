@@ -77,27 +77,27 @@ include CMakeFiles/log.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/log.dir/flags.make
 
-CMakeFiles/log.dir/logger_bench.cpp.o: CMakeFiles/log.dir/flags.make
-CMakeFiles/log.dir/logger_bench.cpp.o: ../logger_bench.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/log.dir/logger_bench.cpp.o"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/log.dir/logger_bench.cpp.o -c /home/user/Desktop/atrimo-test/async_logger/logger_bench.cpp
+CMakeFiles/log.dir/main.cpp.o: CMakeFiles/log.dir/flags.make
+CMakeFiles/log.dir/main.cpp.o: ../main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/log.dir/main.cpp.o"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/log.dir/main.cpp.o -c /home/user/Desktop/atrimo-test/async_logger/main.cpp
 
-CMakeFiles/log.dir/logger_bench.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/log.dir/logger_bench.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/user/Desktop/atrimo-test/async_logger/logger_bench.cpp > CMakeFiles/log.dir/logger_bench.cpp.i
+CMakeFiles/log.dir/main.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/log.dir/main.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/user/Desktop/atrimo-test/async_logger/main.cpp > CMakeFiles/log.dir/main.cpp.i
 
-CMakeFiles/log.dir/logger_bench.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/log.dir/logger_bench.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/user/Desktop/atrimo-test/async_logger/logger_bench.cpp -o CMakeFiles/log.dir/logger_bench.cpp.s
+CMakeFiles/log.dir/main.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/log.dir/main.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/user/Desktop/atrimo-test/async_logger/main.cpp -o CMakeFiles/log.dir/main.cpp.s
 
 # Object files for target log
 log_OBJECTS = \
-"CMakeFiles/log.dir/logger_bench.cpp.o"
+"CMakeFiles/log.dir/main.cpp.o"
 
 # External object files for target log
 log_EXTERNAL_OBJECTS =
 
-log: CMakeFiles/log.dir/logger_bench.cpp.o
+log: CMakeFiles/log.dir/main.cpp.o
 log: CMakeFiles/log.dir/build.make
 log: CMakeFiles/log.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable log"
