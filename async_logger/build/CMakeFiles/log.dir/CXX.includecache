@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/async_logger.hpp
+atomic
+-
+fstream
+-
+iostream
+-
+memory
+-
+mutex
+-
+tuple
+-
+type_traits
+-
+utility
+-
+vector
+-
+thread
+-
+utils.hpp
+../include/utils.hpp
+
+../include/utils.hpp
+chrono
+-
+string
+-
+
+/home/user/Desktop/atrimo-test/async_logger/logger_bench.cpp
+async_logger.hpp
+/home/user/Desktop/atrimo-test/async_logger/async_logger.hpp
+utils.hpp
+/home/user/Desktop/atrimo-test/async_logger/utils.hpp
+
