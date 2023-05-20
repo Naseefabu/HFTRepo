@@ -134,36 +134,43 @@ private:
 class Logger {
 public:
   template <typename... Args>
-  static void Log(const char *fmt, Args &&... args) {
-    queue().emplace(fmt, std::forward<Args>(args)...);
+  void Log(const char *fmt, Args &&... args) {
+    std::cout << "pushing data to queue" << std::endl;
+    queue->emplace(fmt, std::forward<Args>(args)...);
   }
 
-  static void SetQueueSize(const size_t size) { instance().queue_size_ = size; }
+  void SetQueueSize(const size_t size) { queue_size_ = size; }
 
-  static void SetOutput(const std::string &fname) {
-    Logger &logger = instance();
-    std::lock_guard<std::mutex> lock(logger.mutex_);
+  void SetOutput(const std::string &fname) {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (fname == "") {
-      logger.ostream_.reset();
-      logger.cout_ = false;
+      ostream_.reset();
+      cout_ = false;
     } else if (fname == "-") {
-      logger.ostream_.reset();
-      logger.cout_ = true;
+      ostream_.reset();
+      cout_ = true;
     } else {
-      logger.ostream_ = std::make_unique<std::ofstream>(fname);
-      logger.cout_ = false;
+      ostream_ = std::make_unique<std::ofstream>(fname);
+      cout_ = false;
     }
   }
 
-private:
-  Logger() : active_(true), queues_size_(1), queue_size_(1024), cout_(true) {
+  void stop(){
+    active_.store(false, std::memory_order_relaxed);
+  }
+
+public:
+  Logger() : queues_size_(1), queue_size_(1024), cout_(true) {
     // Get the current date
     LastDay = CurrDay();
+    active_.store(true, std::memory_order_relaxed);
+    queue = std::make_shared<QueueType>(queue_size_);
     thread_ = std::thread([this] { Writer(); });
   }
 
-  ~Logger() {
-    active_ = false;
+  ~Logger() { 
+    //active_.store(false, std::memory_order_seq_cst);
+    std::cout << "joining the thread" << std::endl;
     if (thread_.joinable()) {
       thread_.join();
     }
@@ -175,15 +182,11 @@ private:
   Logger &operator=(Logger &&) = delete;
 
   void Writer() {
-    try{
       using namespace std::chrono_literals;
       
-      while (active_ || queues_size_) {
-        {
+      while (active_.load(std::memory_order_relaxed)) {
 
-          // Get the current day
           int NewDay = CurrDay();
-
           if(NewDay != LastDay){
             LastDay = NewDay;
             // create new file with current date and time
@@ -191,57 +194,37 @@ private:
             ostream_ = std::make_unique<std::ofstream>(newFileName);
           }
 
-          for (auto it = queues_.begin(); it != queues_.end();) {
-            auto &q = *it;
-            while (q->front()) {
-              if (ostream_) {
-                q->front()->Format(*ostream_);
-              }
-              if (cout_) {
-                q->front()->Format(std::cout);
-              }
-              q->pop();
-            }
-            if (q.unique() && !q->front()) {
-              it = queues_.erase(it);
-            } else {
-              ++it;
-            }
-          }
-          queues_size_ = queues_.size();
-          std::cout << "queue size : " << queues_size_ << std::endl; 
-        }
-      }
-    }
-    catch(...){
-      std::cout << "Runtime Error Occured" << std::endl;
-    }
-  }
+          if (queue->front()) {
+            if (ostream_) {
 
-  static Logger &instance() {
-    static Logger instance;
-    return instance;
-  }
+              queue->front()->Format(*ostream_);
+              *ostream_ << std::flush; 
+              queue->front()->Format(std::cout);
+
+            }
+
+
+            queue->pop();
+          }
+          
+      }
+      std::cout << "stopped writer thread" << std::endl;
+    }
+
+  
+
 
   using QueueType = Queue<Message>;
 
-  static QueueType &queue() {
-    static thread_local std::shared_ptr<QueueType> queue;
-    if (queue == nullptr) {
-      queue = std::make_shared<QueueType>(instance().queue_size_);
-      std::lock_guard<std::mutex> lock(instance().mutex_);
-      instance().queues_.push_back(queue);
-    }
-    return *queue;
-  }
 
   std::mutex mutex_;
   std::vector<std::shared_ptr<QueueType>> queues_;
   std::thread thread_;
-  bool active_;
+  std::atomic<bool> active_;
   size_t queues_size_;
   size_t queue_size_;
   bool cout_;
   std::unique_ptr<std::ostream> ostream_;
+  std::shared_ptr<QueueType> queue;
   int LastDay;
 };

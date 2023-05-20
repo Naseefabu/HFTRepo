@@ -1,1 +1,1 @@
-/usr/bin/clang++ -O3 -pthread -DNDEBUG -lssl -lcrypto CMakeFiles/log.dir/main.cpp.o -o output/log 
+/usr/bin/clang++ -O3 -pthread -DNDEBUG -lssl -lcrypto CMakeFiles/log.dir/sample.cpp.o -o log 

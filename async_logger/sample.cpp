@@ -4,16 +4,15 @@ using namespace std::chrono_literals;
 
 
 int main(int argc, char *argv[]) {
+  Logger logg;
+  // filename based on current date
+  std::string fname = CreateNewFileName(); 
+  logg.SetOutput(fname);
 
-
-  std::string fname = CreateNewFileName(); // filename based on current date
-  Logger::SetOutput(fname);
-
-  for(int i = 0;i<3;i++){
-    Logger::Log("test", i);
-    
+  for(int64_t i = 0;i<30;i++){
+    logg.Log("test", i);
+    //logg.stop();
   }
-
-
+  
   return 0;
 }
