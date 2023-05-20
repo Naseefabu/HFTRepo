@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/user/Desktop/atrimo-test/async_logger/tests/NewFileMidnightTest.cpp
+atomic
+-
+fstream
+-
+iostream
+-
+memory
+-
+mutex
+-
+tuple
+-
+type_traits
+-
+utility
+-
+vector
+-
+thread
+-
+cassert
+-
+filesystem
+-
+

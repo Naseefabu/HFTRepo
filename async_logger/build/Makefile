@@ -143,6 +143,45 @@ log/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/build
 .PHONY : log/fast
 
+#=============================================================================
+# Target rules for targets named StopNow
+
+# Build rule for target.
+StopNow: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 StopNow
+.PHONY : StopNow
+
+# fast build rule for target.
+StopNow/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/StopNow.dir/build.make tests/CMakeFiles/StopNow.dir/build
+.PHONY : StopNow/fast
+
+#=============================================================================
+# Target rules for targets named NewFileMidnightCross
+
+# Build rule for target.
+NewFileMidnightCross: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 NewFileMidnightCross
+.PHONY : NewFileMidnightCross
+
+# fast build rule for target.
+NewFileMidnightCross/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/NewFileMidnightCross.dir/build.make tests/CMakeFiles/NewFileMidnightCross.dir/build
+.PHONY : NewFileMidnightCross/fast
+
+#=============================================================================
+# Target rules for targets named WriteLogTest
+
+# Build rule for target.
+WriteLogTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 WriteLogTest
+.PHONY : WriteLogTest
+
+# fast build rule for target.
+WriteLogTest/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/WriteLogTest.dir/build.make tests/CMakeFiles/WriteLogTest.dir/build
+.PHONY : WriteLogTest/fast
+
 sample.o: sample.cpp.o
 
 .PHONY : sample.o
@@ -178,6 +217,9 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... NewFileMidnightCross"
+	@echo "... StopNow"
+	@echo "... WriteLogTest"
 	@echo "... log"
 	@echo "... sample.o"
 	@echo "... sample.i"

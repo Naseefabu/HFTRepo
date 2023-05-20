@@ -1,3 +1,8 @@
 /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles/rebuild_cache.dir
 /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles/edit_cache.dir
 /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles/log.dir
+/home/user/Desktop/atrimo-test/async_logger/build/tests/CMakeFiles/edit_cache.dir
+/home/user/Desktop/atrimo-test/async_logger/build/tests/CMakeFiles/StopNow.dir
+/home/user/Desktop/atrimo-test/async_logger/build/tests/CMakeFiles/rebuild_cache.dir
+/home/user/Desktop/atrimo-test/async_logger/build/tests/CMakeFiles/NewFileMidnightCross.dir
+/home/user/Desktop/atrimo-test/async_logger/build/tests/CMakeFiles/WriteLogTest.dir

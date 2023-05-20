@@ -1,0 +1,6 @@
+Tester 6 0.582258
+newfile 1 0.00346505
+writelogtest 15 0.217073
+newfilemidnightcrossed 14 0.000352544
+stopnow 10 0.000211112
+---

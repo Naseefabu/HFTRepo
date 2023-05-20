@@ -11,6 +11,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.18.0-rc1/CMakeCCompiler.cmake"
   "CMakeFiles/3.18.0-rc1/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.18.0-rc1/CMakeSystem.cmake"
+  "../tests/CMakeLists.txt"
   "/usr/local/share/cmake-3.18/Modules/CMakeCInformation.cmake"
   "/usr/local/share/cmake-3.18/Modules/CMakeCXXInformation.cmake"
   "/usr/local/share/cmake-3.18/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake"
@@ -41,9 +42,13 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "tests/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/log.dir/DependInfo.cmake"
+  "tests/CMakeFiles/StopNow.dir/DependInfo.cmake"
+  "tests/CMakeFiles/NewFileMidnightCross.dir/DependInfo.cmake"
+  "tests/CMakeFiles/WriteLogTest.dir/DependInfo.cmake"
   )

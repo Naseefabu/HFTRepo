@@ -1,0 +1,1 @@
+/usr/bin/clang++ -O3 -pthread -lssl -lcrypto CMakeFiles/NewFileMidnightCross.dir/NewFileMidnightTest.cpp.o -o NewFileMidnightCross 

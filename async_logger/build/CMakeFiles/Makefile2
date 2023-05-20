@@ -74,18 +74,42 @@ CMAKE_BINARY_DIR = /home/user/Desktop/atrimo-test/async_logger/build
 
 # The main recursive "all" target.
 all: CMakeFiles/log.dir/all
+all: tests/all
 
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall:
+preinstall: tests/preinstall
 
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/log.dir/clean
+clean: tests/clean
 
 .PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory tests
+
+# Recursive "all" directory target.
+tests/all: tests/CMakeFiles/StopNow.dir/all
+tests/all: tests/CMakeFiles/NewFileMidnightCross.dir/all
+tests/all: tests/CMakeFiles/WriteLogTest.dir/all
+
+.PHONY : tests/all
+
+# Recursive "preinstall" directory target.
+tests/preinstall:
+
+.PHONY : tests/preinstall
+
+# Recursive "clean" directory target.
+tests/clean: tests/CMakeFiles/StopNow.dir/clean
+tests/clean: tests/CMakeFiles/NewFileMidnightCross.dir/clean
+tests/clean: tests/CMakeFiles/WriteLogTest.dir/clean
+
+.PHONY : tests/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/log.dir
@@ -94,7 +118,7 @@ clean: CMakeFiles/log.dir/clean
 CMakeFiles/log.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles --progress-num=1,2 "Built target log"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles --progress-num=7,8 "Built target log"
 .PHONY : CMakeFiles/log.dir/all
 
 # Build rule for subdir invocation for target.
@@ -113,6 +137,87 @@ log: CMakeFiles/log.dir/rule
 CMakeFiles/log.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/log.dir/build.make CMakeFiles/log.dir/clean
 .PHONY : CMakeFiles/log.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/StopNow.dir
+
+# All Build rule for target.
+tests/CMakeFiles/StopNow.dir/all:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/StopNow.dir/build.make tests/CMakeFiles/StopNow.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/StopNow.dir/build.make tests/CMakeFiles/StopNow.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles --progress-num=3,4 "Built target StopNow"
+.PHONY : tests/CMakeFiles/StopNow.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/StopNow.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/StopNow.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/StopNow.dir/rule
+
+# Convenience name for target.
+StopNow: tests/CMakeFiles/StopNow.dir/rule
+
+.PHONY : StopNow
+
+# clean rule for target.
+tests/CMakeFiles/StopNow.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/StopNow.dir/build.make tests/CMakeFiles/StopNow.dir/clean
+.PHONY : tests/CMakeFiles/StopNow.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/NewFileMidnightCross.dir
+
+# All Build rule for target.
+tests/CMakeFiles/NewFileMidnightCross.dir/all:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/NewFileMidnightCross.dir/build.make tests/CMakeFiles/NewFileMidnightCross.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/NewFileMidnightCross.dir/build.make tests/CMakeFiles/NewFileMidnightCross.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles --progress-num=1,2 "Built target NewFileMidnightCross"
+.PHONY : tests/CMakeFiles/NewFileMidnightCross.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/NewFileMidnightCross.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/NewFileMidnightCross.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/NewFileMidnightCross.dir/rule
+
+# Convenience name for target.
+NewFileMidnightCross: tests/CMakeFiles/NewFileMidnightCross.dir/rule
+
+.PHONY : NewFileMidnightCross
+
+# clean rule for target.
+tests/CMakeFiles/NewFileMidnightCross.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/NewFileMidnightCross.dir/build.make tests/CMakeFiles/NewFileMidnightCross.dir/clean
+.PHONY : tests/CMakeFiles/NewFileMidnightCross.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/WriteLogTest.dir
+
+# All Build rule for target.
+tests/CMakeFiles/WriteLogTest.dir/all:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/WriteLogTest.dir/build.make tests/CMakeFiles/WriteLogTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/WriteLogTest.dir/build.make tests/CMakeFiles/WriteLogTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles --progress-num=5,6 "Built target WriteLogTest"
+.PHONY : tests/CMakeFiles/WriteLogTest.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/WriteLogTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/WriteLogTest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/user/Desktop/atrimo-test/async_logger/build/CMakeFiles 0
+.PHONY : tests/CMakeFiles/WriteLogTest.dir/rule
+
+# Convenience name for target.
+WriteLogTest: tests/CMakeFiles/WriteLogTest.dir/rule
+
+.PHONY : WriteLogTest
+
+# clean rule for target.
+tests/CMakeFiles/WriteLogTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/WriteLogTest.dir/build.make tests/CMakeFiles/WriteLogTest.dir/clean
+.PHONY : tests/CMakeFiles/WriteLogTest.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

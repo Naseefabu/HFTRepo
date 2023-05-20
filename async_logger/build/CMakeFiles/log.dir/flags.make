@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/user/Desktop/atrimo-test/async_logger/include
 
-CXX_FLAGS = -O3 -pthread -DNDEBUG -lssl -lcrypto -std=gnu++17
+CXX_FLAGS = -O3 -pthread -lssl -lcrypto -std=gnu++17
 

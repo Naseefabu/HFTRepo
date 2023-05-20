@@ -155,14 +155,20 @@ public:
     }
   }
 
-  void stop(){
+  void stop_and_join(){ // quits after all outstanding logs are saved to disk
     active_.store(false, std::memory_order_relaxed);
+  }
+
+  void stop_now(){ // wont save outstanding logs to disk
+    active_.store(false, std::memory_order_relaxed);
+    join_.store(false, std::memory_order_release); // release because we dont want active_ to reorder below join_ 
   }
 
 public:
   Logger() : queues_size_(1), queue_size_(1024), cout_(true) {
     // Get the current date
     LastDay = CurrDay();
+    join_.store(true, std::memory_order_release);
     active_.store(true, std::memory_order_relaxed);
     queue = std::make_shared<QueueType>(queue_size_);
     thread_ = std::thread([this] { Writer(); });
@@ -182,19 +188,21 @@ public:
   Logger &operator=(Logger &&) = delete;
 
   void Writer() {
+    try{
       using namespace std::chrono_literals;
       
       while (active_.load(std::memory_order_relaxed)) {
 
-          int NewDay = CurrDay();
-          if(NewDay != LastDay){
-            LastDay = NewDay;
-            // create new file with current date and time
-            std::string newFileName = CreateNewFileName();
-            ostream_ = std::make_unique<std::ofstream>(newFileName);
-          }
+          while (join_.load(std::memory_order_acquire) && queue->front()) { // if stop thread it will still save all outstanding logs in the queue if join is true
 
-          if (queue->front()) {
+            int NewDay = CurrDay();
+
+            if(NewDay != LastDay){
+              LastDay = NewDay;
+              // create new file with current date and time
+              std::string newFileName = CreateNewFileName();
+              ostream_ = std::make_unique<std::ofstream>(newFileName);
+            }
             if (ostream_) {
 
               queue->front()->Format(*ostream_);
@@ -202,14 +210,15 @@ public:
               queue->front()->Format(std::cout);
 
             }
-
-
             queue->pop();
           }
           
       }
       std::cout << "stopped writer thread" << std::endl;
+    }catch(...){
+      std::cout << "RUNTIME ERROR IN WRITER THREAD" << std::endl;
     }
+  }
 
   
 
@@ -221,6 +230,7 @@ public:
   std::vector<std::shared_ptr<QueueType>> queues_;
   std::thread thread_;
   std::atomic<bool> active_;
+  std::atomic<bool> join_;
   size_t queues_size_;
   size_t queue_size_;
   bool cout_;
