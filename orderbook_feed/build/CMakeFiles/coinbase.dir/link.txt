@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -pthread -DNDEBUG -lssl -lcrypto CMakeFiles/coinbase.dir/main.cpp.o -o coinbase  -lssl -lcrypto -lpthread 
