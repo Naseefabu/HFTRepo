@@ -20,6 +20,7 @@ set(URLIB_HEADERS ${URLIB_DIRECTORY}/boost/url.hpp ${URLIB_DIRECTORY}/boost/url/
 
 add_executable(coinbase main.cpp)
 target_include_directories(coinbase SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(coinbase PUBLIC include/)
 target_link_libraries(coinbase PUBLIC Boost::boost Threads::Threads)
 target_link_libraries(coinbase PUBLIC ssl crypto)
 target_link_libraries(coinbase PRIVATE nlohmann_json::nlohmann_json)
