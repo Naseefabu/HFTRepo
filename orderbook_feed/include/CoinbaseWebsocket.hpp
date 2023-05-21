@@ -163,13 +163,13 @@ public:
     }
 
   
-  void subscribe_orderbook(const std::string& market)
+  void subscribe_orderbook(const std::string& market) // full channel
   {
     symb = market;
 
     json payload = {{"type", "subscribe"},
                 {"product_ids", {market}},
-                {"channels", {"level2"}}};
+                {"channels", {"full"}}};
 
     message_handler = [this]() {
 
