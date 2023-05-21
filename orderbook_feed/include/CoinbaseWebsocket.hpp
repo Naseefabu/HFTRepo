@@ -172,10 +172,45 @@ public:
                 {"channels", {"full"}}};
 
     message_handler = [this]() {
-
+        
+        OrderbookMessage msg;
+        std::string msg_type;
         json payload = json::parse(beast::buffers_to_string(buffer_.cdata()));
         
-        std::cout << "Coinbase Orderbook Response : " << payload << std::endl;
+        if(payload["type"] == "open"){
+            msg.quantity = payload["remaining_size"]; // or "size" ? inspect
+            msg.price = payload["price"];
+            msg.symbol = symb;
+            msg.type = "open";
+        }
+
+        else if(payload["type"] == "done"){
+            msg.quantity = payload["remaining_size"]; // inspect here too 
+            
+            if(payload.contains("price"))
+                msg.price = payload["price"];
+            else
+                msg.price = 0;
+
+            msg.symbol = symb;
+            msg.type = "done";
+        }
+
+        else if(payload["type"] == "match"){
+            
+            msg.quantity = payload["size"]; 
+            msg.price = payload["price"];
+            msg.symbol = symb;
+            msg.type = "match";
+        }
+        else if(payload["type"] == "change"){
+            
+            msg.quantity = payload["size"]; 
+            msg.price = payload["price"];
+            msg.symbol = symb;
+            msg.type = "match";
+        }
+        (queue.get()).push(msg);
 
     };
 

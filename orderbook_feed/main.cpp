@@ -41,7 +41,6 @@ int main(){
 
     SPSCQueue<OrderbookMessage> INPUT_QUEUE(100000);
 
-    CoinbaseOrderBookManager orderbook_manager(1000000,true,true);
 
 
     std::thread websocket_run([&ctx1,&symbols, &INPUT_QUEUE]() { 
@@ -50,8 +49,18 @@ int main(){
     
     });
 
+    std::thread coinbase_feed_run([&INPUT_QUEUE]() { 
+        set_core_affinity(1);
+        CoinbaseOrderBookManager orderbook_manager(1000000,true,true, std::ref(INPUT_QUEUE));
+        orderbook_manager.run();    
+    });
 
 
-    websocket_run.join();
+    websocket_run.detach();
+    coinbase_feed_run.detach();
+
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::hours(1)); 
+    }
 
 }

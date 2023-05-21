@@ -153,7 +153,8 @@ private:
 class CoinbaseOrderBookManager {
 
 public:
-  //SPSCQueue<OrderbookMessage> INPUT_QUEUE;
+  std::reference_wrapper<SPSCQueue<OrderbookMessage>> que;
+
 
   static constexpr int16_t NOBOOK = std::numeric_limits<int16_t>::max();
   static constexpr int16_t MAXBOOK = std::numeric_limits<int16_t>::max();
@@ -172,10 +173,10 @@ public:
   static_assert(sizeof(Order) == 16, "");
 
 public:
-  CoinbaseOrderBookManager(size_t size_hint, bool all_orders = false,
-       bool all_books = false)
+  CoinbaseOrderBookManager(size_t size_hint, bool all_orders ,bool all_books , SPSCQueue<OrderbookMessage>& qu)
       : all_orders_(all_orders), all_books_(all_books),
         symbols_(16384, 0),
+        que(qu),
         orders_(size_hint, std::numeric_limits<uint64_t>::max()) {
     size_hint_ = orders_.bucket_count();
   }
@@ -236,67 +237,6 @@ public:
     }
   }
 
-  void Executed(uint64_t seqno, uint64_t ref, int32_t qty) {
-    auto oit = orders_.find(ref);
-    if (oit == orders_.end()) {
-      return;
-    }
-
-    Order &order = oit->second;
-    if (order.bookid != NOBOOK) {
-      OrderBook &book = books_[order.bookid];
-      bool top = book.Reduce(seqno, order.buy_sell, order.price, qty);
-    }
-
-    order.qty -= qty;
-    if (order.qty <= 0) {
-      orders_.erase(oit);
-    }
-  }
-
-  void ExecutedAtPrice(uint64_t seqno, uint64_t ref, int32_t qty,
-                       int64_t price) {
-    auto oit = orders_.find(ref);
-    if (oit == orders_.end()) {
-      return;
-    }
-
-    Order &order = oit->second;
-    if (order.bookid != NOBOOK) {
-      OrderBook &book = books_[order.bookid];
-      bool top = book.Reduce(seqno, order.buy_sell, order.price, qty);
-    }
-
-    order.qty -= qty;
-    if (order.qty <= 0) {
-      orders_.erase(oit);
-    }
-  }
-
-  void ExecutedAtPriceSize(uint64_t seqno, uint64_t id, int32_t qty,
-                           int32_t leaves_qty, int64_t price) {
-    auto oit = orders_.find(id);
-    if (oit == orders_.end()) {
-      return;
-    }
-
-    Order &order = oit->second;
-    int32_t delta = order.qty - leaves_qty;
-    if (order.bookid != NOBOOK) {
-      OrderBook &book = books_[order.bookid];
-      bool top;
-      if (delta > 0) {
-        top = book.Reduce(seqno, order.buy_sell, order.price, delta);
-      } else {
-        top = book.Add(seqno, order.buy_sell, order.price, -delta);
-      }
-    }
-
-    order.qty = leaves_qty;
-    if (order.qty <= 0) {
-      orders_.erase(oit);
-    }
-  }
 
   void Reduce(uint64_t seqno, uint64_t ref, int32_t qty) {
     auto oit = orders_.find(ref);
@@ -369,16 +309,19 @@ public:
     }
   }
 
-  void Trade(uint64_t seqno, int64_t shares, uint64_t symbol, int64_t price) {
-    auto it = symbols_.find(symbol);
-    if (it == symbols_.end()) {
-      return;
-    }
+  size_t Size() const { return orders_.size(); }
 
-    OrderBook *book = &books_[it->second];
+  void run(){
+    while (true){
+      if((que.get()).front() != nullptr){
+        std::cout << "popping" << std::endl;
+        OrderbookMessage msg = *(que.get()).front();
+        
+        (que.get()).pop();
+      }
+    }
   }
 
-  size_t Size() const { return orders_.size(); }
 
 private:
   // Non-copyable
