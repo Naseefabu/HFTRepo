@@ -43,21 +43,21 @@ int main(){
 
 
 
-    std::thread websocket_run([&ctx1,&symbols, &INPUT_QUEUE]() { 
+    std::thread coinbase_websocket_run([&ctx1,&symbols, &INPUT_QUEUE]() { 
         set_core_affinity(0);
         run_event_loop(symbols, ctx1, std::ref(INPUT_QUEUE)); 
     
     });
 
-    std::thread coinbase_feed_run([&INPUT_QUEUE]() { 
+    std::thread coinbase_bookbuilder_run([&INPUT_QUEUE]() { 
         set_core_affinity(1);
         CoinbaseOrderBookManager orderbook_manager(1000000,true,true, std::ref(INPUT_QUEUE));
         orderbook_manager.run();    
     });
 
 
-    websocket_run.detach();
-    coinbase_feed_run.detach();
+    coinbase_websocket_run.detach();
+    coinbase_bookbuilder_run.detach();
 
     while (true) {
         std::this_thread::sleep_for(std::chrono::hours(1)); 
