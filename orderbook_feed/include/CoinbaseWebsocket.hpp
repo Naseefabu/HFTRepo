@@ -58,12 +58,12 @@ public:
     std::string wsTarget_ = "/ws/";
     std::string host_;
     std::function<void()> message_handler;
-    std::reference_wrapper<SPSCQueue<OrderbookMessage>> queue;
+    std::reference_wrapper<SPSCQueue<json>> queue;
 
 
   public:
 
-    coinbaseWS(net::any_io_executor ex, ssl::context& ctx, SPSCQueue<OrderbookMessage>& qu)
+    coinbaseWS(net::any_io_executor ex, ssl::context& ctx, SPSCQueue<json>& qu)
         : resolver_(ex)
         , ws_(ex, ctx)
         , queue(qu)
@@ -169,48 +169,14 @@ public:
 
     json payload = {{"type", "subscribe"},
                 {"product_ids", {market}},
-                {"channels", {"full"}}};
+                {"channels", {"level2"}}};
 
     message_handler = [this]() {
         
-        OrderbookMessage msg;
-        std::string msg_type;
         json payload = json::parse(beast::buffers_to_string(buffer_.cdata()));
+        payload["symbol"] = symb;
         
-        if(payload["type"] == "open"){
-            msg.quantity = payload["remaining_size"]; // or "size" ? inspect
-            msg.price = payload["price"];
-            msg.symbol = symb;
-            msg.type = "open";
-        }
-
-        else if(payload["type"] == "done"){
-            msg.quantity = payload["remaining_size"]; // inspect here too 
-            
-            if(payload.contains("price"))
-                msg.price = payload["price"];
-            else
-                msg.price = 0;
-
-            msg.symbol = symb;
-            msg.type = "done";
-        }
-
-        else if(payload["type"] == "match"){
-            
-            msg.quantity = payload["size"]; 
-            msg.price = payload["price"];
-            msg.symbol = symb;
-            msg.type = "match";
-        }
-        else if(payload["type"] == "change"){
-            
-            msg.quantity = payload["size"]; 
-            msg.price = payload["price"];
-            msg.symbol = symb;
-            msg.type = "match";
-        }
-        (queue.get()).push(msg);
+        (queue.get()).push(payload);
 
     };
 

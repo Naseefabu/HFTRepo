@@ -2,7 +2,7 @@
 #include "CBOrderBookManager.hpp"
 
 
-void run_event_loop(const std::vector<std::string>& symbols, ssl::context& ctx, SPSCQueue<OrderbookMessage>&q)
+void run_event_loop(const std::vector<std::string>& symbols, ssl::context& ctx, SPSCQueue<json>&q)
 {
     std::vector<std::shared_ptr<coinbaseWS>> ws_objects; // to make scope outside of for loop
     net::io_context ioc; // one event loop for all symbols
@@ -39,7 +39,7 @@ int main(){
     symbols.push_back("ETH-USD");
     symbols.push_back("ETH-EUR");
 
-    SPSCQueue<OrderbookMessage> INPUT_QUEUE(100000);
+    SPSCQueue<json> INPUT_QUEUE(100000);
 
 
 

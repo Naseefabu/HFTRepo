@@ -1,25 +1,3 @@
-/*
-Copyright (c) 2012-2015 Erik Rigtorp <erik@rigtorp.se>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
-
 #pragma once
 
 #include "HashMap.hpp"
@@ -28,7 +6,10 @@ SOFTWARE.
 #include "types.hpp"
 #include <iostream>
 
+#include <nlohmann/json.hpp>
+
 using namespace rigtorp;
+using json = nlohmann::json;
 
 struct BestPrice {
   int64_t bidqty;
@@ -53,10 +34,9 @@ public:
   struct Level {
     int64_t price = 0;
     int64_t qty = 0;
-    uint64_t seqno = 0;
 
     friend std::ostream &operator<<(std::ostream &out, const Level &level) {
-      out << "Level(" << level.price << ", " << level.qty << ", " << level.seqno
+      out << "Level(" << level.price << ", " << level.qty << ", " 
           << ")";
       return out;
     }
@@ -84,32 +64,29 @@ public:
 
   void SetUserData(void *data) { data_ = data; }
 
-  bool Add(uint64_t seqno, bool buy_sell, int64_t price, int64_t qty) {
-    if (qty <= 0) {
-      return false;
-    }
-    auto &side = buy_sell ? buy_ : sell_;
-    int64_t prio = buy_sell ? -price : price;
-    auto it = side.insert(std::make_pair(prio, Level())).first;
-    it->second.price = price;
-    it->second.qty += qty;
-    it->second.seqno = seqno;
-    return it == side.begin();
-  }
+  void Add(bool buy_sell, int64_t price, int64_t qty) {
 
-  bool Reduce(uint64_t seqno, bool buy_sell, int64_t price, int64_t qty) {
     auto &side = buy_sell ? buy_ : sell_;
     int64_t prio = buy_sell ? -price : price;
     auto it = side.find(prio);
     if (it == side.end()) {
-      return false;
-    }
-    it->second.qty -= qty;
-    it->second.seqno = seqno;
-    if (it->second.qty <= 0) {
+      auto it = side.insert(std::make_pair(prio, Level())).first;
+      it->second.price = price;
+      it->second.qty = qty;
+    }else{
       side.erase(it);
+      Add(buy_sell,price,qty);
     }
-    return it == side.begin();
+  }
+
+  void Delete(bool buy_sell, int64_t price) {
+    auto &side = buy_sell ? buy_ : sell_;
+    int64_t prio = buy_sell ? -price : price;
+    auto it = side.find(prio);
+    if (it == side.end()) { // no price
+      return;
+    }
+    side.erase(it);
   }
 
   bool IsCrossed() {
@@ -124,7 +101,7 @@ public:
     auto bit = buy_.begin();
     auto sit = sell_.begin();
     while (bit != buy_.end() && sit != sell_.end() &&
-           bit->second.price >= sit->second.price) {
+            bit->second.price >= sit->second.price) {
       if (bit->second.seqno > sit->second.seqno) {
         sell_.erase(sit++);
       } else {
@@ -132,6 +109,7 @@ public:
       }
     }
   }
+
 
   friend std::ostream &operator<<(std::ostream &out, const OrderBook &book) {
     out << "Buy:" << std::endl;
@@ -153,7 +131,7 @@ private:
 class CoinbaseOrderBookManager {
 
 public:
-  std::reference_wrapper<SPSCQueue<OrderbookMessage>> que;
+  std::reference_wrapper<SPSCQueue<json>> que;
 
 
   static constexpr int16_t NOBOOK = std::numeric_limits<int16_t>::max();
@@ -173,7 +151,7 @@ public:
   static_assert(sizeof(Order) == 16, "");
 
 public:
-  CoinbaseOrderBookManager(size_t size_hint, bool all_orders ,bool all_books , SPSCQueue<OrderbookMessage>& qu)
+  CoinbaseOrderBookManager(size_t size_hint, bool all_orders ,bool all_books , SPSCQueue<json>& qu)
       : all_orders_(all_orders), all_books_(all_books),
         symbols_(16384, 0),
         que(qu),
@@ -213,16 +191,9 @@ public:
     return book;
   }
 
-  void Add(uint64_t seqno, uint64_t ref, bool buy_sell, int32_t qty,
-           uint64_t symbol, int64_t price) {
+  void Add(bool buy_sell, int32_t qty, uint64_t symbol, int64_t price) {
     auto it = symbols_.find(symbol);
     if (it == symbols_.end()) {
-      if (!all_books_) {
-        if (all_orders_) {
-          orders_.emplace(ref, Order(price, qty, buy_sell, NOBOOK));
-        }
-        return;
-      }
       if (books_.size() == MAXBOOK) {
         // too many books
         return;
@@ -232,91 +203,71 @@ public:
     }
     int16_t bookid = it->second;
     OrderBook &book = books_[bookid];
-    if (orders_.emplace(ref, Order(price, qty, buy_sell, bookid)).second) {
-      bool top = book.Add(seqno, buy_sell, price, qty);
-    }
-  }
 
-
-  void Reduce(uint64_t seqno, uint64_t ref, int32_t qty) {
-    auto oit = orders_.find(ref);
-    if (oit == orders_.end()) {
-      return;
-    }
-
-    Order &order = oit->second;
-    if (order.bookid != NOBOOK) {
-      OrderBook &book = books_[order.bookid];
-      bool top = book.Reduce(seqno, order.buy_sell, order.price, qty);
-    }
-
-    order.qty -= qty;
-    if (order.qty <= 0) {
-      orders_.erase(oit);
-    }
-  }
-
-  void Delete(uint64_t seqno, uint64_t ref) {
-    auto oit = orders_.find(ref);
-    if (oit == orders_.end()) {
-      return;
-    }
-
-    Order &order = oit->second;
-    if (order.bookid != NOBOOK) {
-      OrderBook &book = books_[order.bookid];
-      bool top = book.Reduce(seqno, order.buy_sell, order.price, order.qty);
-    }
-
-    orders_.erase(oit);
-  }
-
-  void Replace(uint64_t seqno, uint64_t ref, uint64_t ref2, int32_t qty,
-               int64_t price) {
-    auto oit = orders_.find(ref);
-    if (oit == orders_.end()) {
-      return;
-    }
-
-    Order &order = oit->second;
-    if (order.bookid != NOBOOK) {
-      OrderBook &book = books_[order.bookid];
-      bool top = book.Reduce(seqno, order.buy_sell, order.price, order.qty);
-      bool top2 = book.Add(seqno, order.buy_sell, price, qty);
-    }
-
-    orders_.erase(oit);
-    orders_.emplace(ref2, Order(price, qty, order.buy_sell, order.bookid));
-  }
-
-  void Modify(uint64_t seqno, uint64_t id, int32_t qty, int64_t price) {
-    auto oit = orders_.find(id);
-    if (oit == orders_.end()) {
-      return;
-    }
-
-    Order &order = oit->second;
-    if (order.bookid != NOBOOK) {
-      OrderBook &book = books_[order.bookid];
-      bool top = book.Reduce(seqno, order.buy_sell, order.price, order.qty);
-      bool top2 = book.Add(seqno, order.buy_sell, price, qty);
-    }
-
-    order.qty = qty;
-    order.price = price;
-    if (order.qty <= 0) {
-      orders_.erase(oit);
-    }
+    book.Add(buy_sell, price, qty);
+ 
   }
 
   size_t Size() const { return orders_.size(); }
+
+  void handle_snapshot(std::string symbol, json message){
+    
+    OrderBook& book = Subscribe(symbol);
+    bool buy_sell = true;
+    for (const auto& bid : message["bids"]) {
+      double price = std::stod(bid[0].get<std::string>());
+      double size = std::stod(bid[1].get<std::string>()); 
+      book.Add(buy_sell,price,size);
+    }
+    buy_sell = false;
+    for (const auto& ask : message["asks"]) {
+      double price = std::stod(ask[0].get<std::string>());
+      double size = std::stod(ask[1].get<std::string>());
+      book.Add(buy_sell,price,size);
+    }
+  }
+
+  void handle_deltas(std::string symbol, json message){
+    OrderBook& book = Subscribe(symbol);
+    std::cout << book << std::endl;
+    bool buy_sell;
+    for (const auto& change : message["changes"]) {
+      if(change[0]=="buy"){
+        buy_sell = true;
+        double price = std::stod(change[1].get<std::string>());
+        double size = std::stod(change[2].get<std::string>());
+        if(size==0){ // delete
+          book.Delete(buy_sell,price);
+        }else{
+          book.Add(buy_sell,price,size);
+        }
+      }
+      else{
+        buy_sell = false;
+        double price = std::stod(change[1].get<std::string>());
+        double size = std::stod(change[2].get<std::string>());
+        if(size==0){ // delete
+          book.Delete(buy_sell,price);
+        }else{
+          book.Add(buy_sell,price,size);
+        }
+      }
+    }
+    std::cout << book << std::endl;
+
+  }
 
   void run(){
     while (true){
       if((que.get()).front() != nullptr){
         std::cout << "popping" << std::endl;
-        OrderbookMessage msg = *(que.get()).front();
-        
+        json msg = *(que.get()).front();
+        if(msg["type"] == "snapshot"){
+          handle_snapshot(msg["symbol"],msg);
+        }
+        else{
+          handle_deltas(msg["symbol"],msg);
+        }
         (que.get()).pop();
       }
     }

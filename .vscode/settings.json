@@ -63,6 +63,12 @@
         "bit": "cpp",
         "cfenv": "cpp",
         "codecvt": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "csignal": "cpp",
+        "any": "cpp",
+        "strstream": "cpp",
+        "forward_list": "cpp",
+        "future": "cpp",
+        "valarray": "cpp"
     }
 }

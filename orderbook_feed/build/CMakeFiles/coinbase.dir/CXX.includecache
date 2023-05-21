@@ -17,6 +17,8 @@ types.hpp
 ../include/types.hpp
 iostream
 -
+nlohmann/json.hpp
+-
 
 ../include/CoinbaseWebsocket.hpp
 boost/asio.hpp
