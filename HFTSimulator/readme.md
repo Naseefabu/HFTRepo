@@ -7,7 +7,8 @@ The HFT Simulator is built using a modular and scalable multithreaded architectu
 
 By assigning hot threads, such as the matching engine and strategy threads, to specific cores, the simulator aims to keep the CPU caches "hot" with the relevant data, improving cache utilization and reducing memory latency. This approach can significantly improve overall throughput and reduce latency, especially in high-frequency trading scenarios where microseconds matter.
 
-![Screenshot from 2023-05-22 23-18-55](https://github.com/Naseefabu/HFTRepo/assets/104965020/5cfa959c-818e-45e6-8642-bf077cebf26d)
+
+![Screenshot from 2023-05-22 23-35-32](https://github.com/Naseefabu/HFTRepo/assets/104965020/479f4cfb-9ca7-44ba-a35f-8026d49ebc05)
 
 
 ## Future Performance Improvements
