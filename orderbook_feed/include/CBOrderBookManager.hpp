@@ -29,7 +29,7 @@ struct BestPrice {
   }
 };
 
-class OrderBook { // AGGREGATED 
+class OrderBook { 
 public:
   struct Level {
     int64_t price = 0;

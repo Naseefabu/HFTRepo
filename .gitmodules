@@ -1,3 +1,6 @@
 [submodule "orderbook_feed/external/url"]
 	path = orderbook_feed/external/url
 	url = https://github.com/boostorg/url.git
+[submodule "HFTSimulator/external/url"]
+	path = HFTSimulator/external/url
+	url = https://github.com/boostorg/url.git

@@ -41,8 +41,6 @@ int main(){
 
     SPSCQueue<json> INPUT_QUEUE(100000);
 
-
-
     std::thread coinbase_websocket_run([&ctx1,&symbols, &INPUT_QUEUE]() { 
         set_core_affinity(0);
         run_event_loop(symbols, ctx1, std::ref(INPUT_QUEUE)); 

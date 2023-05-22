@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -pthread -DNDEBUG -lssl -lcrypto CMakeFiles/HFTSim.dir/main.cpp.o -o HFTSim  -lssl -lcrypto -lpthread 
