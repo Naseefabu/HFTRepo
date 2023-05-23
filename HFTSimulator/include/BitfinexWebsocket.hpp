@@ -131,9 +131,10 @@ public:
     message_handler = [this]() {
         
         json payload = json::parse(beast::buffers_to_string(buffer_.cdata()));
-        payload["symbol"] = symb;
+        //payload["symbol"] = symb; // because its array we cant do this will fix it later
         (queue.get()).push(payload);
         std::cout << "bitfinex payload" << payload <<std::endl;
+        
     };
 
     run(payload);            

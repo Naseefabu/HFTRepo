@@ -18,6 +18,7 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../include"
   "_deps/json-src/single_include"
+  "../external/ordered-map/include"
   )
 
 # Targets to which this target links.

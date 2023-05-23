@@ -4,3 +4,6 @@
 [submodule "HFTSimulator/external/url"]
 	path = HFTSimulator/external/url
 	url = https://github.com/boostorg/url.git
+[submodule "HFTSimulator/external/ordered-map"]
+	path = HFTSimulator/external/ordered-map
+	url = https://github.com/Tessil/ordered-map.git

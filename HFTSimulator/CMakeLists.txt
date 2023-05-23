@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(HFTSIM)
 
-#set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+# set(CMAKE_CXX_COMPILER /usr/bin/clang++)
 set(CMAKE_CXX_STANDARD 17)
 set (CMAKE_CXX_FLAGS "-O3 -pthread -DNDEBUG -lssl -lcrypto")
 
@@ -15,11 +15,15 @@ find_package(Boost 1.79.0 REQUIRED COMPONENTS system thread filesystem container
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
 
-set(URLIB_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/external/url/include")
+set(URLIB_DIRECTORY external/url/include)
 set(URLIB_HEADERS ${URLIB_DIRECTORY}/boost/url.hpp ${URLIB_DIRECTORY}/boost/url/src.hpp)
+
 
 add_executable(HFTSim main.cpp)
 target_include_directories(HFTSim SYSTEM PRIVATE ${Boost_INCLUDE_DIRS})
+target_include_directories(HFTSim SYSTEM PRIVATE external/ordered-map/include)
+# target_include_directories(HFTSim PUBLIC ${URLIB_DIRECTORY})
+# target_include_directories(HFTSim PUBLIC ${URLIB_HEADERS})
 target_include_directories(HFTSim PUBLIC include/)
 target_link_libraries(HFTSim PUBLIC Boost::boost Threads::Threads)
 target_link_libraries(HFTSim PUBLIC ssl crypto)

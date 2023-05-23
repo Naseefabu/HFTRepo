@@ -3,6 +3,9 @@
 #include "utils.hpp"
 #include "CoinbaseWebsocket.hpp"
 #include "BitfinexWebsocket.hpp"
+#include "CoinbaseOrderbookManager.hpp"
+#include "coinbase-api.hpp"
+
 using namespace rigtorp;
 
 
@@ -30,19 +33,47 @@ int main(){
 
 
     std::thread bitfinex_websocket_run([&ctx1,&bitfinex_symbols, &BITFINEX_INPUT_QUEUE]() { 
-        set_core_affinity(0);
-        run_bitfinex_event_loop(bitfinex_symbols, ctx1, std::ref(BITFINEX_INPUT_QUEUE)); 
+         set_core_affinity(0);
+         run_bitfinex_event_loop(bitfinex_symbols, ctx1, std::ref(BITFINEX_INPUT_QUEUE)); 
     
     });
 
     std::thread coinbase_websocket_run([&ctx1,&coinbase_symbols, &COINBASE_INPUT_QUEUE]() { 
-        set_core_affinity(0);
-        run_coinbase_event_loop(coinbase_symbols, ctx1, std::ref(COINBASE_INPUT_QUEUE)); 
+         set_core_affinity(1);
+         run_coinbase_event_loop(coinbase_symbols, ctx1, std::ref(COINBASE_INPUT_QUEUE)); 
+    
+    });
+
+    std::thread coinbase_orderbook_manager_run([&ctx1,&coinbase_symbols, &COINBASE_INPUT_QUEUE]() { 
+         set_core_affinity(2);
+         CoinbaseOrderBookManager orderbook_manager(1000000,true,true, std::ref(COINBASE_INPUT_QUEUE));
+         orderbook_manager.run();  
     
     });
 
     bitfinex_websocket_run.detach();
     coinbase_websocket_run.detach();
+    coinbase_orderbook_manager_run.detach();
+
+    net::io_context ioc;
+
+    auto coinbaseapi = std::make_shared<coinbaseAPI>(ioc.get_executor(),ctx1,ioc);
+    json response = coinbaseapi->get_snapshot("ETH-USD",3);
+
+    for (const auto& bid : response["bids"]) {
+        std::cout << "buys" <<  std::endl;
+        std::cout << "id : " << bid[2] << std::endl;
+        std::cout << "price : " << bid[0] << std::endl;
+        std::cout << "size : " << bid[1] << std::endl;
+    }
+
+    for (const auto& ask : response["asks"]) {
+        std::cout << "sells" << std::endl;
+        std::cout << "id : " << ask[2] << std::endl;
+        std::cout << "price : " << ask[0] << std::endl;
+        std::cout << "size : " << ask[1] << std::endl;
+    }
+
 
 
     while (true) {

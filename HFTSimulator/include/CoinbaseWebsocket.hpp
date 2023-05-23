@@ -132,8 +132,9 @@ public:
         
         json payload = json::parse(beast::buffers_to_string(buffer_.cdata()));
         payload["symbol"] = symb;
+        //payload["exchange_origin"] = "coinbase";
         (queue.get()).push(payload);
-        std::cout << "coinbase message : " << payload << std::endl;
+        // std::cout << "coinbase message : " << payload << std::endl;
 
     };
 

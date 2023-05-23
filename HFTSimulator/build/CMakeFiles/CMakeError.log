@@ -1,22 +1,22 @@
 Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
 Change Dir: /home/user/Desktop/atrimo-test/HFTSimulator/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_07794/fast && /usr/bin/make  -f CMakeFiles/cmTC_07794.dir/build.make CMakeFiles/cmTC_07794.dir/build
+Run Build Command(s):/usr/bin/make cmTC_04776/fast && /usr/bin/make  -f CMakeFiles/cmTC_04776.dir/build.make CMakeFiles/cmTC_04776.dir/build
 make[1]: Entering directory '/home/user/Desktop/atrimo-test/HFTSimulator/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_07794.dir/src.c.o
-/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD -o CMakeFiles/cmTC_07794.dir/src.c.o -c /home/user/Desktop/atrimo-test/HFTSimulator/build/CMakeFiles/CMakeTmp/src.c
-Linking C executable cmTC_07794
-/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_07794.dir/link.txt --verbose=1
-/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD CMakeFiles/cmTC_07794.dir/src.c.o -o cmTC_07794 
-/usr/bin/ld: CMakeFiles/cmTC_07794.dir/src.c.o: in function `main':
+Building C object CMakeFiles/cmTC_04776.dir/src.c.o
+/usr/bin/cc   -DCMAKE_HAVE_LIBC_PTHREAD -o CMakeFiles/cmTC_04776.dir/src.c.o -c /home/user/Desktop/atrimo-test/HFTSimulator/build/CMakeFiles/CMakeTmp/src.c
+Linking C executable cmTC_04776
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_04776.dir/link.txt --verbose=1
+/usr/bin/cc  -DCMAKE_HAVE_LIBC_PTHREAD CMakeFiles/cmTC_04776.dir/src.c.o -o cmTC_04776 
+/usr/bin/ld: CMakeFiles/cmTC_04776.dir/src.c.o: in function `main':
 src.c:(.text+0x46): undefined reference to `pthread_create'
 /usr/bin/ld: src.c:(.text+0x52): undefined reference to `pthread_detach'
 /usr/bin/ld: src.c:(.text+0x5e): undefined reference to `pthread_cancel'
 /usr/bin/ld: src.c:(.text+0x6f): undefined reference to `pthread_join'
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_07794.dir/build.make:107: cmTC_07794] Error 1
+make[1]: *** [CMakeFiles/cmTC_04776.dir/build.make:107: cmTC_04776] Error 1
 make[1]: Leaving directory '/home/user/Desktop/atrimo-test/HFTSimulator/build/CMakeFiles/CMakeTmp'
-make: *** [Makefile:141: cmTC_07794/fast] Error 2
+make: *** [Makefile:141: cmTC_04776/fast] Error 2
 
 
 Source file was:
@@ -43,18 +43,18 @@ int main(void)
 Determining if the function pthread_create exists in the pthreads failed with the following output:
 Change Dir: /home/user/Desktop/atrimo-test/HFTSimulator/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/make cmTC_3e312/fast && /usr/bin/make  -f CMakeFiles/cmTC_3e312.dir/build.make CMakeFiles/cmTC_3e312.dir/build
+Run Build Command(s):/usr/bin/make cmTC_532a8/fast && /usr/bin/make  -f CMakeFiles/cmTC_532a8.dir/build.make CMakeFiles/cmTC_532a8.dir/build
 make[1]: Entering directory '/home/user/Desktop/atrimo-test/HFTSimulator/build/CMakeFiles/CMakeTmp'
-Building C object CMakeFiles/cmTC_3e312.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_3e312.dir/CheckFunctionExists.c.o -c /usr/local/share/cmake-3.18/Modules/CheckFunctionExists.c
-Linking C executable cmTC_3e312
-/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_3e312.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_3e312.dir/CheckFunctionExists.c.o -o cmTC_3e312  -lpthreads 
+Building C object CMakeFiles/cmTC_532a8.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_532a8.dir/CheckFunctionExists.c.o -c /usr/local/share/cmake-3.18/Modules/CheckFunctionExists.c
+Linking C executable cmTC_532a8
+/usr/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_532a8.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_532a8.dir/CheckFunctionExists.c.o -o cmTC_532a8  -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_3e312.dir/build.make:107: cmTC_3e312] Error 1
+make[1]: *** [CMakeFiles/cmTC_532a8.dir/build.make:107: cmTC_532a8] Error 1
 make[1]: Leaving directory '/home/user/Desktop/atrimo-test/HFTSimulator/build/CMakeFiles/CMakeTmp'
-make: *** [Makefile:141: cmTC_3e312/fast] Error 2
+make: *** [Makefile:141: cmTC_532a8/fast] Error 2
 
 
 

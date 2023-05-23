@@ -52,3 +52,13 @@ void set_core_affinity(unsigned int core_id)
     pthread_t current_thread = pthread_self();
     pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
 }
+
+
+
+void fail_http(beast::error_code ec, char const* what)
+{
+    std::cerr << what << ": " << ec.message() << "\n";
+}
+
+
+

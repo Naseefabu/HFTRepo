@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DJSON_DIAGNOSTICS=0 -DJSON_USE_IMPLICIT_CONVERSIONS=1
 
-CXX_INCLUDES = -I/home/user/Desktop/atrimo-test/HFTSimulator/include -I/home/user/Desktop/atrimo-test/HFTSimulator/build/_deps/json-src/single_include
+CXX_INCLUDES = -I/home/user/Desktop/atrimo-test/HFTSimulator/include -I/home/user/Desktop/atrimo-test/HFTSimulator/build/_deps/json-src/single_include -isystem /home/user/Desktop/atrimo-test/HFTSimulator/external/ordered-map/include
 
 CXX_FLAGS = -O3 -pthread -DNDEBUG -lssl -lcrypto -std=gnu++17
 
