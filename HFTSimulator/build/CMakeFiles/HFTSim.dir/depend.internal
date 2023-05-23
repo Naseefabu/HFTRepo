@@ -7,6 +7,7 @@ CMakeFiles/HFTSim.dir/main.cpp.o
  ../include/BitfinexWebsocket.hpp
  ../include/CoinbaseOrderbookManager.hpp
  ../include/CoinbaseWebsocket.hpp
+ ../include/DummyStrategy.hpp
  ../include/HashMap.hpp
  ../include/SPSCQueue.hpp
  ../include/coinbase-api.hpp

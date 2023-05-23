@@ -6,6 +6,7 @@ CMakeFiles/HFTSim.dir/main.cpp.o: ../external/ordered-map/include/tsl/ordered_ma
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/BitfinexWebsocket.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/CoinbaseOrderbookManager.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/CoinbaseWebsocket.hpp
+CMakeFiles/HFTSim.dir/main.cpp.o: ../include/DummyStrategy.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/HashMap.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/SPSCQueue.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/coinbase-api.hpp

@@ -73,12 +73,28 @@ boost/container/flat_map.hpp
 -
 tsl/ordered_map.h
 -
+coinbase-api.hpp
+../include/coinbase-api.hpp
+utils.hpp
+../include/utils.hpp
 iostream
 -
 cstdlib
 -
 
 ../include/CoinbaseWebsocket.hpp
+
+../include/DummyStrategy.hpp
+iostream
+-
+chrono
+-
+thread
+-
+string
+-
+SPSCQueue.hpp
+../include/SPSCQueue.hpp
 
 ../include/HashMap.hpp
 cstddef
@@ -177,6 +193,8 @@ CoinbaseOrderbookManager.hpp
 /home/user/Desktop/atrimo-test/HFTSimulator/CoinbaseOrderbookManager.hpp
 coinbase-api.hpp
 /home/user/Desktop/atrimo-test/HFTSimulator/coinbase-api.hpp
+DummyStrategy.hpp
+/home/user/Desktop/atrimo-test/HFTSimulator/DummyStrategy.hpp
 
 _deps/json-src/single_include/nlohmann/json.hpp
 algorithm

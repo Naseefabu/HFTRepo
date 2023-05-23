@@ -1,30 +1,12 @@
-/*
-Copyright (c) 2012-2015 Erik Rigtorp <erik@rigtorp.se>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
 
 #pragma once
 
 #include "HashMap.hpp"
 #include <boost/container/flat_map.hpp>
 #include <tsl/ordered_map.h>
+#include "coinbase-api.hpp"
+#include "utils.hpp"
 #include <iostream>
 #include <cstdlib> 
 
@@ -52,8 +34,8 @@ struct Order {
 	double qty = 0;
 	bool buy_sell = 0;
 	int16_t bookid = NOBOOK;
-
-	Order(int64_t price, int32_t qty, int16_t buy_sell, int16_t bookid)
+// what 
+	Order(double price, double qty, int16_t buy_sell, int16_t bookid)
 	    : price(price), qty(qty), buy_sell(buy_sell), bookid(bookid) {}
 	Order() {}
 };
@@ -106,7 +88,7 @@ public:
     
     auto it = side.find(prio);
     if (it == side.end()) {
-        Level level;
+      Level level;
   		level.price = price;
   		level.seqno = seqno;
   		level.qty = order.qty; // check
@@ -187,7 +169,7 @@ public:
   void *data_ = nullptr;
 };
 
-class CoinbaseOrderBookManager {
+class OrderBookManager {
 
 public:
   std::reference_wrapper<SPSCQueue<json>> que;
@@ -197,11 +179,11 @@ public:
   //static_assert(sizeof(Order) == 16, "");
 
 public:
-  CoinbaseOrderBookManager(size_t size_hint, bool all_orders ,bool all_books, SPSCQueue<json>& qu)
+  OrderBookManager(size_t size_hint, bool all_orders ,bool all_books, SPSCQueue<json>& qu)
       : que(qu), all_orders_(all_orders), all_books_(all_books),
         symbols_(16384, 0){}
 
-  ~CoinbaseOrderBookManager() {
+  ~OrderBookManager() {
     if (orders_.bucket_count() > size_hint_) {
       std::cerr << "WARNING bucket count " << orders_.bucket_count()
                 << " greater than size hint " << size_hint_
@@ -336,105 +318,194 @@ public:
     }
   }
 
-  void handle_coinbase(std::string symbol, json message){
+  void reset_book(OrderBook& book, std::string symbol){
+    ssl::context ctx1{ssl::context::tlsv12_client};
+    ctx1.set_verify_mode(ssl::verify_peer);
+    ctx1.set_default_verify_paths();
+    
+    // clear everything    
+    orders_.clear();
+    book.buy_.clear();
+    book.sell_.clear();
+
+    net::io_context ioc;
+    auto coinbaseapi = std::make_shared<coinbaseAPI>(ioc.get_executor(),ctx1,ioc);
+    json response = coinbaseapi->get_snapshot(symbol,3);
+    uint64_t no = response["sequence"].get<std::uint64_t>();
+    book.seq = no;
+
+    bool buy_sell;
+    std::string p;
+    std::string q;
+    std::string id;
+    
+    double price;
+    double qty;
+
+    for (const auto& bid : response["bids"]) {
+        buy_sell = true;
+        id = bid[2].get<std::string>();
+        p = bid[0].get<std::string>();
+        q = bid[1].get<std::string>();
+
+        price = std::stod(p);
+        qty = std::stod(q);
+        //std::cout << "buys" <<  std::endl;
+        //std::cout << "id : " << bid[2] << std::endl;
+        //std::cout << "price : " << bid[0] << std::endl;
+        //std::cout << "size : " << bid[1] << std::endl;
+        Order order = Order(price,qty,buy_sell,books_.size() - 1);
+        book.Add(no,id, buy_sell, price, qty, order);
+
+    }
+
+    for (const auto& ask : response["asks"]) {
+        buy_sell = false;
+        id = ask[2].get<std::string>();
+        p = ask[0].get<std::string>();
+        q = ask[1].get<std::string>();
+        price = std::stod(p);
+        qty = std::stod(q);
+        
+        //std::cout << "buys" <<  std::endl;
+        //std::cout << "id : " << ask[2] << std::endl;
+        //std::cout << "price : " << ask[0] << std::endl;
+        //std::cout << "size : " << ask[1] << std::endl;
+        Order order = Order(price,qty,buy_sell,books_.size() - 1);
+        book.Add(no,id, buy_sell, price, qty, order);
+    }
+
+    //std::cout << book << std::endl;
+  }
+
+  void handle_coinbase(json message){
+    std::string symbol = message["symbol"].get<std::string>();
     OrderBook& book = Subscribe(symbol);
+
+    uint64_t sequence= message["sequence"].get<std::uint64_t>();
+
+
     if(book.seq == 0){ // first
-    	// get snapshot
+    	reset_book(book,symbol);
     }
     if(book.seq == -1){
-    	// get snapshot
+    	reset_book(book,symbol);
     }
-    if (message["sequence"] <= book.seq){ // older messages
+    if (sequence <= book.seq){ // older messages
     	return;
     }
-    if(message["sequence"] >= book.seq+1){
-    	// get snapshot
+    if(sequence >= book.seq+1){
+    	reset_book(book,symbol);
     }
 
     uint64_t seq;
     bool buy_sell;
-    double price;
+    std::string p;
+    std::string r;
     double remaining_size;
+    double price;
     std::string orderid;
     if(message["type"] == "open"){
+      std::cout << "open" << std::endl;
     	if(message["side"] == "buy"){
-    		seq = std::stoull(message["sequence"].get<std::string>());
-    		std::string orderid = message["order_id"].get<std::string>();
-    		price = message["price"].get<double>();
-    		remaining_size = message["remaining_size"].get<double>();
-    		buy_sell = true;
+    		seq = message["sequence"].get<std::uint64_t>();
+    		orderid = message["order_id"].get<std::string>();
+    		p = message["price"].get<std::string>();
+        price = std::stod(p);
+    		r = message["remaining_size"].get<std::string>();
+        remaining_size = std::stod(r);
+    		
+        buy_sell = true;
     		Add(seq,orderid,buy_sell,remaining_size,654,price); // fix the symbol
     	}
     	else{
 
-    		seq = std::stoull(message["sequence"].get<std::string>());
+    		seq = message["sequence"].get<std::uint64_t>();
     		std::string orderid = message["order_id"].get<std::string>();
-    		price = message["price"].get<double>();
-    		remaining_size = message["remaining_size"].get<double>();
-    		buy_sell = false;
+    		p = message["price"].get<std::string>();
+    		price = std::stod(p);
+        r = message["remaining_size"].get<std::string>();
+        remaining_size = std::stod(r);
+        buy_sell = false;
     		Add(seq,orderid,buy_sell,remaining_size,654,price); // fix the symbol
     	}
     }
 
     else if(message["type"] == "change"){
+      std::cout << "change" << std::endl;
+      if(message["reason"] == "STP"){
 
-    	if(message.contains("new_size")){
-   			remaining_size = message["new_size"];
-    	}else{ 
-    		std::cout << "INVALID CHANGE MESSAGE" << std::endl;   
-    		return;
-    	}
-    	if(message["side"] == "buy"){
-    		seq = std::stoull(message["sequence"].get<std::string>());
-    		orderid = message["order_id"].get<std::string>();
-    		price = message["price"].get<double>();
-    		buy_sell = true;
-    		handle_coinbase_change(orderid,buy_sell,price,remaining_size,book);
-    		book.seq = seq;
-    	}else{
-    		orderid = message["order_id"].get<std::string>();
-    		price = message["price"].get<double>();
-    		buy_sell = false;
-    		handle_coinbase_change(orderid,buy_sell,price,remaining_size,book);
-    		seq = std::stoull(message["sequence"].get<std::string>());
-    		book.seq = seq;
-    	}
+      	if(message.contains("new_size")){
+     			r = message["new_size"].get<std::string>();
+          remaining_size = std::stod(r);
+      	}else{ 
+      		std::cout << "INVALID CHANGE MESSAGE" << std::endl;   
+      		return;
+      	}
+      	if(message["side"] == "buy"){
+      		seq = message["sequence"].get<std::uint64_t>();
+      		orderid = message["order_id"].get<std::string>();
+      		p = message["price"].get<std::string>();
+          price = std::stod(p);
+      		buy_sell = true;
+      		handle_coinbase_change(orderid,buy_sell,price,remaining_size,book);
+      		book.seq = seq;
+      	}else{
+      		orderid = message["order_id"].get<std::string>();
+      		p = message["price"].get<std::string>();
+          price = std::stod(p);
+      		buy_sell = false;
+      		handle_coinbase_change(orderid,buy_sell,price,remaining_size,book);
+      		seq = message["sequence"].get<std::uint64_t>();
+      		book.seq = seq;
+      	}
+      }
     }
 	else if (message["type"] == "match"){
+      std::cout << "match" << std::endl;
+
 		if(message["side"] == "buy"){
 			orderid = message["order_id"].get<std::string>();
-			seq = std::stoull(message["sequence"].get<std::string>());
-			price = message["price"].get<double>();
-			remaining_size = message["size"].get<double>();
+			seq = message["sequence"].get<std::uint64_t>();
+			p = message["price"].get<std::string>();
+      price = std::stod(p);
+			r = message["size"].get<std::string>();
+      remaining_size = std::stod(r);
 			Reduce(seq, orderid, remaining_size);
       book.seq = seq;
 		}
 	}
 
   else if(message["type"] == "done"){
-    if(message["side"] == "buy"){
-      orderid = message["order_id"].get<std::string>();
-      seq = std::stoull(message["sequence"].get<std::string>());
-      price = message["price"].get<double>();
-      remaining_size = message["size"].get<double>();
-      Reduce(seq, orderid, remaining_size);
-      book.seq = seq;
-    }
+    std::cout << "done" << std::endl;
+
+    orderid = message["order_id"].get<std::string>();
+
+    seq = message["sequence"].get<std::uint64_t>();
+
+    p = message["price"].get<std::string>();
+
+    price = std::stod(p);
+
+    r = message["remaining_size"].get<std::string>();
+
+    remaining_size = std::stod(r);
+    Reduce(seq, orderid, remaining_size);
+    book.seq = seq;
+    
   }
+  std::cout << book << std::endl;
 	
 }
-
-
-
-
 
 
   void run(){
     while (true){
       if((que.get()).front() != nullptr){
-        std::cout << "popping" << std::endl;
+        //std::cout << "popping" << std::endl;
         json msg = *(que.get()).front();
-        std::cout << msg << std::endl;
+        handle_coinbase(msg);
+        //std::cout << msg << std::endl;
         (que.get()).pop();
       }
     }
@@ -443,8 +514,8 @@ public:
 
 private:
   // Non-copyable
-  CoinbaseOrderBookManager(const CoinbaseOrderBookManager &) = delete;
-  CoinbaseOrderBookManager &operator=(const CoinbaseOrderBookManager &) = delete;
+  OrderBookManager(const OrderBookManager &) = delete;
+  OrderBookManager &operator=(const OrderBookManager &) = delete;
 
   struct Hash {
     size_t operator()(uint64_t h) const noexcept {
