@@ -11,6 +11,7 @@ CMakeFiles/HFTSim.dir/main.cpp.o
  ../include/HashMap.hpp
  ../include/SPSCQueue.hpp
  ../include/coinbase-api.hpp
+ ../include/types.hpp
  ../include/utils.hpp
  /home/user/Desktop/atrimo-test/HFTSimulator/main.cpp
  _deps/json-src/single_include/nlohmann/json.hpp

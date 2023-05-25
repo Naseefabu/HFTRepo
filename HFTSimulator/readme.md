@@ -34,3 +34,39 @@ To enhance parsing efficiency, the simulator can leverage Single Instruction, Mu
 
 ### ISOLCPUS and Thread Isolation
 ISOLCPUS allows for isolating specific CPU cores exclusively for specific tasks, ensuring that no other user-level threads can run on those cores. By dedicating CPU cores solely to the HFT Simulator's critical threads, it reduces contention and interference from other processes, enhancing overall performance and predictability. 
+
+
+# Build Instructions
+
+### Install dependencies
+
+```
+# install dependent packages
+sudo apt-get update
+sudo apt-get install libboost-all-dev
+
+
+# install cmake
+sudo apt install cmake
+
+# install boost 1.79
+wget https://www.boost.org/users/history/version_1_79_0.html
+tar --bzip2 -xf boost_1_79_0.tar.bz2
+cd boost_1_79_0/
+./boostrap.sh
+./b2
+sudo ./b2 install
+```
+
+steps to build and run the simulator :
+```
+git clone --recurse-submodules https://github.com/Naseefabu/HFTRepo.git
+cd HFTSimulator
+rm -rf build
+mkdir build
+cd build
+cmake ..
+make
+./HFTSim
+
+```

@@ -10,6 +10,7 @@ CMakeFiles/HFTSim.dir/main.cpp.o: ../include/DummyStrategy.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/HashMap.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/SPSCQueue.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/coinbase-api.hpp
+CMakeFiles/HFTSim.dir/main.cpp.o: ../include/types.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../include/utils.hpp
 CMakeFiles/HFTSim.dir/main.cpp.o: ../main.cpp
 CMakeFiles/HFTSim.dir/main.cpp.o: _deps/json-src/single_include/nlohmann/json.hpp

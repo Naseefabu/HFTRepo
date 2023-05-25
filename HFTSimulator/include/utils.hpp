@@ -16,6 +16,8 @@
 #include <pthread.h>
 #include <sched.h>
 #include "SPSCQueue.hpp"
+#include <initializer_list>
+#include "types.hpp"
 
 
 
@@ -59,6 +61,22 @@ void fail_http(beast::error_code ec, char const* what)
 {
     std::cerr << what << ": " << ec.message() << "\n";
 }
+
+
+class QueueManager {
+public:
+
+    std::reference_wrapper<SPSCQueue<json>> COINBASE_INPUT_QUEUE;
+    std::reference_wrapper<SPSCQueue<json>> BITFINEX_INPUT_QUEUE;
+    std::reference_wrapper<SPSCQueue<Trader_Order>> STRATEGY_ORDER_QUEUE; 
+    std::reference_wrapper<SPSCQueue<Trader_fills>> STRATEGY_FILLS_QUEUE;
+
+    QueueManager(SPSCQueue<json>& coinbase_input_queue, SPSCQueue<json>& bitfinex_input_queue, SPSCQueue<Trader_Order>& strategy_order_queue, SPSCQueue<Trader_fills>& trader_fills_queue) 
+                    :COINBASE_INPUT_QUEUE(coinbase_input_queue), BITFINEX_INPUT_QUEUE(bitfinex_input_queue), STRATEGY_FILLS_QUEUE(trader_fills_queue), STRATEGY_ORDER_QUEUE(strategy_order_queue){}
+
+  QueueManager(const QueueManager&) = delete;
+  QueueManager &operator=(const QueueManager &) = delete;
+};
 
 
 

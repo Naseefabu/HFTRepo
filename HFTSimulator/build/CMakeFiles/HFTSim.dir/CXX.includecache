@@ -95,6 +95,10 @@ string
 -
 SPSCQueue.hpp
 ../include/SPSCQueue.hpp
+types.hpp
+../include/types.hpp
+utils.hpp
+../include/utils.hpp
 
 ../include/HashMap.hpp
 cstddef
@@ -146,6 +150,8 @@ exception
 utils.hpp
 ../include/utils.hpp
 
+../include/types.hpp
+
 ../include/utils.hpp
 boost/asio.hpp
 -
@@ -177,6 +183,10 @@ sched.h
 -
 SPSCQueue.hpp
 ../include/SPSCQueue.hpp
+initializer_list
+-
+types.hpp
+../include/types.hpp
 
 /home/user/Desktop/atrimo-test/HFTSimulator/main.cpp
 iostream

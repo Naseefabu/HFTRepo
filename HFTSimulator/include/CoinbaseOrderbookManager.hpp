@@ -169,18 +169,20 @@ public:
   void *data_ = nullptr;
 };
 
+
+
 class OrderBookManager {
 
 public:
-  std::reference_wrapper<SPSCQueue<json>> que;
+  QueueManager& queue_manager; 
   static constexpr int16_t NOBOOK = std::numeric_limits<int16_t>::max();
   static constexpr int16_t MAXBOOK = std::numeric_limits<int16_t>::max();
 
   //static_assert(sizeof(Order) == 16, "");
 
 public:
-  OrderBookManager(size_t size_hint, bool all_orders ,bool all_books, SPSCQueue<json>& qu)
-      : que(qu), all_orders_(all_orders), all_books_(all_books),
+  OrderBookManager(size_t size_hint, bool all_orders ,bool all_books, QueueManager& qu)
+      : queue_manager(qu), all_orders_(all_orders), all_books_(all_books),
         symbols_(16384, 0){}
 
   ~OrderBookManager() {
@@ -277,22 +279,6 @@ public:
 
   size_t Size() const { return orders_.size(); }
 
-  void handle_snapshot(std::string symbol, json message){
-    
-    OrderBook& book = Subscribe(symbol);
-    bool buy_sell = true;
-    for (const auto& bid : message["bids"]) {
-      double price = std::stod(bid[0].get<std::string>());
-      double size = std::stod(bid[1].get<std::string>()); 
-      //book.Add(buy_sell,price,size);
-    }
-    buy_sell = false;
-    for (const auto& ask : message["asks"]) {
-      double price = std::stod(ask[0].get<std::string>());
-      double size = std::stod(ask[1].get<std::string>());
-      //book.Add(buy_sell,price,size);
-    }
-  }
 
   void handle_coinbase_change(std::string ref, bool buy_sell, double price, double qty, OrderBook& book){
 
@@ -494,19 +480,18 @@ public:
     book.seq = seq;
     
   }
-  std::cout << book << std::endl;
+  //std::cout << book << std::endl;
 	
 }
 
-
   void run(){
     while (true){
-      if((que.get()).front() != nullptr){
+      if(queue_manager.COINBASE_INPUT_QUEUE.get().front() != nullptr){
         //std::cout << "popping" << std::endl;
-        json msg = *(que.get()).front();
+        json msg = *queue_manager.COINBASE_INPUT_QUEUE.get().front();
         handle_coinbase(msg);
         //std::cout << msg << std::endl;
-        (que.get()).pop();
+        queue_manager.COINBASE_INPUT_QUEUE.get().pop();
       }
     }
   }
@@ -517,7 +502,7 @@ private:
   OrderBookManager(const OrderBookManager &) = delete;
   OrderBookManager &operator=(const OrderBookManager &) = delete;
 
-  struct Hash {
+  struct Hash { 
     size_t operator()(uint64_t h) const noexcept {
       h ^= h >> 33;
       h *= 0xff51afd7ed558ccd;

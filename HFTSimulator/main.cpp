@@ -23,15 +23,15 @@ int main(){
     SPSCQueue<Trader_Order> STRATEGY_ORDER_QUEUE(100000);
     SPSCQueue<Trader_fills> STRATEGY_FILLS_QUEUE(100000);
 
+    QueueManager queue_manager(std::ref(COINBASE_INPUT_QUEUE),std::ref(BITFINEX_INPUT_QUEUE),
+        std::ref(STRATEGY_ORDER_QUEUE),std::ref(STRATEGY_FILLS_QUEUE));
+
 
     std::vector<std::string> bitfinex_symbols;
-    // Add symbols
     bitfinex_symbols.push_back("tBTCUSD");
 
     std::vector<std::string> coinbase_symbols;
-    // Add symbols
     coinbase_symbols.push_back("ETH-USD");
-
 
     std::thread bitfinex_websocket_run([&ctx1,&bitfinex_symbols, &BITFINEX_INPUT_QUEUE]() { 
          set_core_affinity(0);
@@ -45,19 +45,18 @@ int main(){
     
     });
 
-    std::thread orderbook_manager_run([&ctx1,&coinbase_symbols, &COINBASE_INPUT_QUEUE]() { 
+    std::thread orderbook_manager_run([&ctx1,&coinbase_symbols, &queue_manager]() { 
          set_core_affinity(2);
-         OrderBookManager orderbook_manager(1000000,true,true, std::ref(COINBASE_INPUT_QUEUE));
+         OrderBookManager orderbook_manager(1000000,true,true, std::ref(queue_manager));
          orderbook_manager.run();  
     
     });
 
 
-    std::thread dummy_strategy_run([&ctx1,&STRATEGY_ORDER_QUEUE, &STRATEGY_FILLS_QUEUE]() { 
+    std::thread dummy_strategy_run([&ctx1,&queue_manager]() { 
          set_core_affinity(3);
-         DummyStrategy strategy(std::ref(STRATEGY_ORDER_QUEUE), std::ref(STRATEGY_FILLS_QUEUE));
+         DummyStrategy strategy(std::ref(queue_manager));
          strategy.run();  
-    
     });
 
 
@@ -72,3 +71,9 @@ int main(){
     }
 
 }
+
+
+
+
+
+
