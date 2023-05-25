@@ -485,13 +485,21 @@ public:
 }
 
   void run(){
+    size_t coinbase_queue_elements = 1;
     while (true){
-      if(queue_manager.COINBASE_INPUT_QUEUE.get().front() != nullptr){
-        //std::cout << "popping" << std::endl;
-        json msg = *queue_manager.COINBASE_INPUT_QUEUE.get().front();
-        handle_coinbase(msg);
-        //std::cout << msg << std::endl;
-        queue_manager.COINBASE_INPUT_QUEUE.get().pop();
+      
+      while(!coinbase_queue_elements){
+        if(queue_manager.COINBASE_INPUT_QUEUE.get().front() != nullptr){
+          
+          std::cout << "popping" << std::endl;
+          json msg = *queue_manager.COINBASE_INPUT_QUEUE.get().front();
+          handle_coinbase(msg);
+          //std::cout << msg << std::endl;
+          queue_manager.COINBASE_INPUT_QUEUE.get().pop();
+
+          coinbase_queue_elements--;
+          
+        }
       }
     }
   }
