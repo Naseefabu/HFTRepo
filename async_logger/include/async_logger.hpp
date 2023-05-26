@@ -177,9 +177,9 @@ public:
   ~Logger() { 
     //active_.store(false, std::memory_order_seq_cst);
     std::cout << "joining the thread" << std::endl;
-    if (thread_.joinable()) {
-      thread_.join();
-    }
+    //if (thread_.joinable()) {
+    //  thread_.join();
+    //}
   }
 
   Logger(Logger &other) = delete;
@@ -204,7 +204,7 @@ public:
               ostream_ = std::make_unique<std::ofstream>(newFileName);
             }
             if (ostream_) {
-
+              std::cout << "writing" << std::endl;
               queue->front()->Format(*ostream_);
               *ostream_ << std::flush; 
               queue->front()->Format(std::cout);

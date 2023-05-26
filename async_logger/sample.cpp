@@ -12,8 +12,10 @@ int main(int argc, char *argv[]) {
 
   for(int64_t i = 0;i<1000000;i++){
     logg.Log("test", i);
-    logg.stop_now(); // by this time writer thread spins inside second while loop
+    //logg.stop_now(); // by this time writer thread spins inside second while loop
   }
+
+  logg.thread_.detach();
 
   return 0;
 }

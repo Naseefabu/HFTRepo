@@ -7,3 +7,14 @@ Locking has non-neglegible runtime cost as each lock requires a syscall(context 
 ### Architecture 
 
 ![Screenshot from 2023-05-19 19-36-58](https://github.com/Naseefabu/HFTRepo/assets/104965020/9ba0ab4d-c71c-436e-9d62-a8859da118a3)
+
+
+## Build instructions and Run
+git clone --recurse-submodules https://github.com/Naseefabu/HFTRepo.git
+cd async_logger
+rm -rf build
+mkdir build
+cd build
+cmake ..
+make
+./log
